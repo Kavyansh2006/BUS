@@ -10,16 +10,12 @@ import {
 } from 'react-native';
 
 // Import a Google icon from a React Native icon library
-// Make sure you have 'react-native-vector-icons' installed and linked
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 // Corrected paths (3 levels up: features, auth, src):
-// From: '../../assets/images/collegeLogo.png'
-// To: '../../../assets/images/collegeLogo.png'
 import collegeLogo from '../../assets/images/collegeLogo.png';
-// From: '../../assets/images/login-illustration.svg'
-// To: '../../../assets/images/login-illustration.svg'
 import loginIllustration from '../../assets/images/login-illustration.svg';
+import busIcon from '../../assets/images/busIcon.png';
 
 
 interface LoginScreenProps {
@@ -36,13 +32,16 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onGoToDashboa
   return (
     <SafeAreaView style={styles.page}>
       <View style={styles.card}>
+        {/* The size of this image is controlled by styles.logo */}
         <Image source={collegeLogo} style={styles.logo} resizeMode="contain" />
         <Text style={styles.welcomeHeading}>WELCOME</Text>
+
         <Image
-          source={loginIllustration}
-          style={styles.illustration}
+          source={busIcon}
+          style={styles.busIcon}
           resizeMode="contain"
         />
+
         <Text style={styles.subheading}>Get on Board</Text>
 
         <TouchableOpacity style={styles.loginButton} onPress={handleLoginClick}>
@@ -89,8 +88,9 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   logo: {
-    height: 45,
-    width: '50%',
+    // INCREASED LOGO SIZE
+    height: 80, // Increased from 45
+    width: '60%', // Increased from 50%
     marginBottom: 40,
   },
   welcomeHeading: {
@@ -99,9 +99,15 @@ const styles = StyleSheet.create({
     color: '#1a202c',
     marginBottom: 20,
   },
+  busIcon: {
+    width: 200,
+    height: 150,
+    marginBottom: 30,
+    zIndex: 1,
+  },
   illustration: {
     width: '80%',
-    height: 200, // Fixed height for illustration
+    height: 200,
     marginBottom: 40,
   },
   subheading: {
@@ -119,12 +125,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: '#4285F4',
     borderRadius: 9999, // Full pill shape
-    // Shadow for iOS
     shadowColor: 'rgba(0, 118, 255, 0.39)',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 14,
-    // Shadow for Android
     elevation: 5,
   },
   loginButtonText: {

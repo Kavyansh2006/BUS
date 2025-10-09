@@ -87,6 +87,7 @@ interface HomeDashboardProps {
   onGoToMyTrip: () => void;
   onGoToTripHistory: () => void;
   onGoToFeedback: () => void;
+  onLogout: () => void; // <--- ADDED LOGOUT PROP
 }
 
 const HomeDashboard: React.FC<HomeDashboardProps> = ({
@@ -95,6 +96,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
   onGoToMyTrip,
   onGoToTripHistory,
   onGoToFeedback,
+  onLogout, // <--- DESTRUCTURED LOGOUT PROP
 }) => {
   const [activeRoute, setActiveRoute] = useState('campusToCity');
   const [activeDate, setActiveDate] = useState('today');
@@ -145,11 +147,12 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
         onGoToMyTrip={onGoToMyTrip}
         onGoToTripHistory={onGoToTripHistory}
         onGoToFeedback={onGoToFeedback}
+        onLogout={onLogout} // <--- PASSED LOGOUT PROP TO SIDEBAR
       />
       {/* Pass function to open the sidebar to the Header */}
       <Header
         onMenuClick={() => {
-          console.log('Hamburger button was pressed!'); // <-- Add this line
+          console.log('Hamburger button was pressed!');
           setSidebarOpen(true);
         }}
         onProfileClick={onGoToProfile}
@@ -306,7 +309,6 @@ const styles = StyleSheet.create({
   cardTime: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 4,
   },
   cardSeats: {
     fontSize: 14,

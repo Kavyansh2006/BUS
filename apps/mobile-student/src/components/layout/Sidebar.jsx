@@ -21,6 +21,7 @@ interface SidebarProps {
   onGoToMyTrip: () => void;
   onGoToTripHistory: () => void;
   onGoToFeedback: () => void;
+  onLogout: () => void; // <--- ADDED PROP HERE
 }
 
 interface MenuItemProps {
@@ -38,7 +39,14 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, text, onPress }) => (
 );
 
 // --- MAIN COMPONENT: Sidebar ---
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onGoToMyTrip, onGoToTripHistory, onGoToFeedback }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+    isOpen,
+    onClose,
+    onGoToMyTrip,
+    onGoToTripHistory,
+    onGoToFeedback,
+    onLogout // <--- DESTRUCTURED PROP HERE
+}) => {
   const slideAnim = useRef(new Animated.Value(-300)).current;
 
   useEffect(() => {
@@ -73,6 +81,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onGoToMyTrip, onGoTo
     onClose();
   };
 
+  // Function to handle logout and close sidebar
+  const handleLogout = () => { // <--- NEW HANDLER
+      onLogout();
+      onClose();
+  }
+
   return (
     <Modal
       transparent
@@ -101,7 +115,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onGoToMyTrip, onGoTo
               <MenuItem icon={<Icon name="help-circle-outline" size={24} color="#4A5568" />} text="Help & Support" />
             </View>
             <View style={styles.footer}>
-              <MenuItem icon={<Icon name="log-out-outline" size={24} color="#D9534F" />} text="Logout" />
+              {/* ATTACHED THE NEW LOGOUT HANDLER HERE */}
+              <MenuItem icon={<Icon name="log-out-outline" size={24} color="#D9534F" />} text="Logout" onPress={handleLogout} />
             </View>
           </SafeAreaView>
         </Animated.View>

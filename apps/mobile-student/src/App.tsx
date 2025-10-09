@@ -28,7 +28,7 @@ function App() {
   const handleProfileComplete = () => setAppState('DASHBOARD');
   const handleGoToDashboard = () => setAppState('DASHBOARD');
   const handleGoToProfile = () => setAppState('PROFILE_SCREEN');
-  const handleLogout = () => setAppState('AUTH');
+  const handleLogout = () => setAppState('AUTH'); // This is the function we need to pass
 
   const handleBookingSuccess = (tripDetails: TripDetails) => {
     setBookedTripDetails(tripDetails);
@@ -71,6 +71,7 @@ function App() {
         onGoToMyTrip={handleGoToMyTrip}
         onGoToTripHistory={handleGoToTripHistory}
         onGoToFeedback={handleGoToFeedback}
+        onLogout={handleLogout} // <--- ADDED PROP HERE
       />
     );
   }
