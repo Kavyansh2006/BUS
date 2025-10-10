@@ -16,7 +16,7 @@ import {
 // Corrected path:
 // From: '../../assets/images/profile-setup.svg' (Incorrect, only two levels up)
 // To: '../../../assets/images/profile-setup.svg' (Three levels up: features, student, src)
-import profileSetupIllustration from '../../assets/images/profile-setup.svg';
+import profileSetupIllustration from '../../assets/images/profile-setup.png';
 
 interface ProfileSetupScreenProps {
   onProfileComplete: () => void;
@@ -32,15 +32,39 @@ const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onProfileComple
   const [parentMobile, setParentMobile] = useState('');
 
   const handleSubmit = () => {
-    // Simple validation to check if all fields are filled
+    // 1. Simple validation to check if all fields are filled
     if (!name || !rollNumber || !hostel || !roomNumber || !studentMobile || !parentMobile) {
       Alert.alert('Incomplete Form', 'Please fill in all the details.');
       return;
     }
-    
+
+    // 2. Mobile Number Validation Check
+    const mobileRegex = /^\d{10}$/; // Regex for exactly 10 digits
+
+    if (!mobileRegex.test(studentMobile)) {
+      Alert.alert('Invalid Mobile Number', 'Student Mobile Number must be exactly 10 digits.');
+      return;
+    }
+
+    if (!mobileRegex.test(parentMobile)) {
+      Alert.alert('Invalid Mobile Number', 'Parent Mobile Number must be exactly 10 digits.');
+      return;
+    }
+    // Alternatively, a simpler length check:
+    /*
+    if (studentMobile.length !== 10) {
+        Alert.alert('Invalid Mobile Number', 'Student Mobile Number must be exactly 10 digits.');
+        return;
+    }
+    if (parentMobile.length !== 10) {
+        Alert.alert('Invalid Mobile Number', 'Parent Mobile Number must be exactly 10 digits.');
+        return;
+    }
+    */
+
     // In a real app, you would save the data here.
     Alert.alert('Profile Submitted', 'Your details have been saved successfully!');
-    
+
     // Call the function to move to the next screen
     onProfileComplete();
   };
@@ -96,6 +120,8 @@ const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onProfileComple
                 value={studentMobile}
                 onChangeText={setStudentMobile}
                 keyboardType="phone-pad"
+                // Added maxLength prop to prevent typing more than 10 digits
+                maxLength={10}
                 placeholderTextColor="#A0AEC0"
               />
               <TextInput
@@ -104,6 +130,8 @@ const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onProfileComple
                 value={parentMobile}
                 onChangeText={setParentMobile}
                 keyboardType="phone-pad"
+                // Added maxLength prop to prevent typing more than 10 digits
+                maxLength={10}
                 placeholderTextColor="#A0AEC0"
               />
 

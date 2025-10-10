@@ -1,37 +1,53 @@
+// features/student/BookingConfirmation.tsx
+
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-// --- PROPS INTERFACE ---
+// --- PROPS INTERFACE (Updated) ---
 interface BookingConfirmationProps {
   tripDetails: {
     time: string;
-    date: string; // e.g., "October 8"
+    date: string;
     route: 'Campus to City' | 'City to Campus';
+    isWaitlist?: boolean; // Flag to check if this is a waitlist confirmation
   };
   onGoToDashboard: () => void;
 }
 
-// --- MAIN COMPONENT ---
+// --- MAIN COMPONENT (Updated) ---
 const BookingConfirmation: React.FC<BookingConfirmationProps> = ({ tripDetails, onGoToDashboard }) => {
+  // Check if this is for a waitlist
+  const isWaitlist = tripDetails.isWaitlist;
+
   return (
-    // Converted from a page to a Modal component
     <Modal
       transparent
       visible={true}
       onRequestClose={onGoToDashboard}
       animationType="fade"
     >
-      {/* Translucent overlay */}
       <View style={styles.overlay}>
-        {/* White container for the modal content */}
         <View style={styles.modalContainer}>
           <View style={styles.iconContainer}>
-            <Icon name="checkmark-circle" size={100} color="#28a745" />
+            {/* DYNAMIC ICON & COLOR */}
+            <Icon
+              name={isWaitlist ? "time" : "checkmark-circle"}
+              size={100}
+              color={isWaitlist ? "#fd7e14" : "#28a745"}
+            />
           </View>
 
-          <Text style={styles.title}>Booking Confirmed!</Text>
-          <Text style={styles.subtitle}>Your seat has been successfully reserved.</Text>
+          {/* DYNAMIC TITLE */}
+          <Text style={styles.title}>
+            {isWaitlist ? 'You are on the Waitlist!' : 'Booking Confirmed!'}
+          </Text>
+          {/* DYNAMIC SUBTITLE */}
+          <Text style={styles.subtitle}>
+            {isWaitlist
+              ? 'We will notify you if a seat becomes available for this trip.'
+              : 'Your seat has been successfully reserved.'}
+          </Text>
 
           <View style={styles.detailsContainer}>
             <Text style={styles.detailsHeader}>TRIP DETAILS</Text>
@@ -60,7 +76,6 @@ const BookingConfirmation: React.FC<BookingConfirmationProps> = ({ tripDetails, 
 
 // --- STYLES ---
 const styles = StyleSheet.create({
-  // Style for the translucent background overlay
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
@@ -68,7 +83,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  // This is the white card that holds the modal content
   modalContainer: {
     width: '100%',
     maxWidth: 400,
@@ -76,12 +90,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 30,
     alignItems: 'center',
-    // Shadow for iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.1,
     shadowRadius: 30,
-    // Shadow for Android
     elevation: 10,
   },
   iconContainer: {
@@ -92,6 +104,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1a202c',
     marginBottom: 10,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,

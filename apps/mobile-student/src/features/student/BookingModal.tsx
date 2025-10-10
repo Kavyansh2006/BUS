@@ -1,3 +1,5 @@
+// features/student/BookingModal.tsx
+
 import React from 'react';
 import {
   View,
@@ -5,27 +7,30 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
-  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-// --- PROPS INTERFACE ---
+// --- PROPS INTERFACE (Updated) ---
 interface BookingModalProps {
   visible: boolean;
   tripDetails: {
     time: string;
     date: string;
     route: 'Campus to City' | 'City to Campus';
+    isWaitlist?: boolean; // Flag to indicate if this is a waitlist action
   } | null;
   onConfirm: () => void;
   onClose: () => void;
 }
 
-// --- MAIN COMPONENT ---
+// --- MAIN COMPONENT (Updated) ---
 const BookingModal: React.FC<BookingModalProps> = ({ visible, tripDetails, onConfirm, onClose }) => {
   if (!tripDetails) {
     return null;
   }
+
+  // Check if this is for a waitlist
+  const isWaitlist = tripDetails.isWaitlist;
 
   return (
     <Modal
@@ -36,8 +41,16 @@ const BookingModal: React.FC<BookingModalProps> = ({ visible, tripDetails, onCon
     >
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
-          <Text style={styles.title}>Confirm Your Trip</Text>
-          <Text style={styles.subtitle}>Please review the details below before confirming your booking.</Text>
+          {/* DYNAMIC TITLE */}
+          <Text style={styles.title}>
+            {isWaitlist ? 'Join the Waitlist' : 'Confirm Your Trip'}
+          </Text>
+          {/* DYNAMIC SUBTITLE */}
+          <Text style={styles.subtitle}>
+            {isWaitlist
+              ? "No seats are currently available, but we can notify you if a spot opens up."
+              : 'Please review the details below before confirming your booking.'}
+          </Text>
 
           <View style={styles.detailsCard}>
             <View style={styles.detailRow}>
@@ -54,8 +67,14 @@ const BookingModal: React.FC<BookingModalProps> = ({ visible, tripDetails, onCon
             </View>
           </View>
 
-          <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-            <Text style={styles.confirmButtonText}>Confirm Booking</Text>
+          {/* DYNAMIC BUTTON */}
+          <TouchableOpacity
+            style={[styles.confirmButton, isWaitlist && styles.waitlistButton]} // Apply orange style for waitlist
+            onPress={onConfirm}
+          >
+            <Text style={styles.confirmButtonText}>
+              {isWaitlist ? 'Confirm Waitlist' : 'Confirm Booking'}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
@@ -66,7 +85,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ visible, tripDetails, onCon
   );
 };
 
-// --- STYLES ---
+// --- STYLES (Updated) ---
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
@@ -87,6 +106,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1a202c',
     marginBottom: 10,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 15,
@@ -119,10 +139,13 @@ const styles = StyleSheet.create({
   confirmButton: {
     width: '100%',
     paddingVertical: 15,
-    backgroundColor: '#007bff',
+    backgroundColor: '#007bff', // Default blue for booking
     borderRadius: 10,
     alignItems: 'center',
     marginBottom: 10,
+  },
+  waitlistButton: {
+    backgroundColor: '#fd7e14', // Orange for waitlist
   },
   confirmButtonText: {
     fontSize: 16,
