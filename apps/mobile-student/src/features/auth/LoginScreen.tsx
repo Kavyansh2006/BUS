@@ -1,4 +1,5 @@
-import React from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -7,15 +8,21 @@ import {
   SafeAreaView,
   Image,
   Alert,
+  TextInput,
+  ActivityIndicator,
 } from 'react-native';
 
 // Import a Google icon from a React Native icon library
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 // Corrected paths (3 levels up: features, auth, src):
-import collegeLogo from '../../assets/images/collegeLogo.png';
-import loginIllustration from '../../assets/images/login-illustration.svg';
+// @ts-ignore
+import collegeLogo from 'assets/images/collegeLogo.png';
+// @ts-ignore
 import busIcon from '../../assets/images/busIcon.png';
+
+// API Service - connects to LoginUserHandler
+import { authService } from '../../services';
 
 
 interface LoginScreenProps {
@@ -24,9 +31,38 @@ interface LoginScreenProps {
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onGoToDashboard }) => {
-  const handleLoginClick = () => {
-    Alert.alert('Login successful!', 'Proceeding to profile setup.');
-    onLoginSuccess();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showEmailLogin, setShowEmailLogin] = useState(false);
+
+  // Handle email/password login
+  // → POST /api/auth/login → LoginUserHandler
+  const handleEmailLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter email and password');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await authService.login({ email, password });
+        Alert.alert('Success', response.message || 'Login successful!');
+        onGoToDashboard();
+    } catch (error: any) {
+      Alert.alert('Login Failed', error.message || 'Invalid credentials');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // TODO: Implement Google OAuth (currently backend uses Cognito email/password)
+  const handleGoogleLogin = () => {
+    Alert.alert(
+      'Google Login',
+      'Google OAuth not yet implemented. Use email login below or dev buttons.',
+      [{ text: 'OK', onPress: () => setShowEmailLogin(true) }]
+    );
   };
 
   return (
@@ -44,12 +80,53 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess, onGoToDashboa
 
         <Text style={styles.subheading}>Get on Board</Text>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLoginClick}>
-          <View style={styles.googleIconContainer}>
-            <Icon name="google" size={20} color="#4285F4" />
+        {!showEmailLogin ? (
+          <>
+            <TouchableOpacity style={styles.loginButton} onPress={handleGoogleLogin}>
+              <View style={styles.googleIconContainer}>
+                <Icon name="google" size={20} color="#4285F4" />
+              </View>
+              <Text style={styles.loginButtonText}>Sign in with Google</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowEmailLogin(true)} style={styles.emailToggle}>
+              <Text style={styles.emailToggleText}>Or use email/password</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <View style={styles.emailForm}>
+            <TextInput
+              style={styles.input}
+              placeholder="College Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              editable={!loading}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              editable={!loading}
+            />
+            <TouchableOpacity
+              style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+              onPress={handleEmailLogin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={styles.loginButtonText}>Login</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowEmailLogin(false)} style={styles.backButton}>
+              <Text style={styles.backButtonText}>← Back to Google</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.loginButtonText}>Sign in with Google</Text>
-        </TouchableOpacity>
+        )}
 
         <View style={styles.devButtonsContainer}>
           <TouchableOpacity style={styles.devButton} onPress={onLoginSuccess}>
@@ -157,6 +234,39 @@ const styles = StyleSheet.create({
   },
   devButtonText: {
     color: 'white',
+    fontSize: 14,
+  },
+  emailToggle: {
+    marginTop: 15,
+  },
+  emailToggleText: {
+    color: '#007bff',
+    fontSize: 14,
+    textDecorationLine: 'underline',
+  },
+  emailForm: {
+    width: '100%',
+    maxWidth: 340,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#dee2e6',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: '#f8f9fa',
+  },
+  loginButtonDisabled: {
+    opacity: 0.6,
+  },
+  backButton: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  backButtonText: {
+    color: '#6c757d',
     fontSize: 14,
   },
 });

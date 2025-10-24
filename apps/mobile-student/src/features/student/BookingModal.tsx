@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -21,10 +22,11 @@ interface BookingModalProps {
   } | null;
   onConfirm: () => void;
   onClose: () => void;
+  loading?: boolean; // Loading state during API call
 }
 
 // --- MAIN COMPONENT (Updated) ---
-const BookingModal: React.FC<BookingModalProps> = ({ visible, tripDetails, onConfirm, onClose }) => {
+const BookingModal: React.FC<BookingModalProps> = ({ visible, tripDetails, onConfirm, onClose, loading = false }) => {
   if (!tripDetails) {
     return null;
   }
@@ -69,14 +71,19 @@ const BookingModal: React.FC<BookingModalProps> = ({ visible, tripDetails, onCon
 
           {/* DYNAMIC BUTTON */}
           <TouchableOpacity
-            style={[styles.confirmButton, isWaitlist && styles.waitlistButton]} // Apply orange style for waitlist
+            style={[styles.confirmButton, isWaitlist && styles.waitlistButton, loading && styles.buttonDisabled]}
             onPress={onConfirm}
+            disabled={loading}
           >
-            <Text style={styles.confirmButtonText}>
-              {isWaitlist ? 'Confirm Waitlist' : 'Confirm Booking'}
-            </Text>
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={styles.confirmButtonText}>
+                {isWaitlist ? 'Confirm Waitlist' : 'Confirm Booking'}
+              </Text>
+            )}
           </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+          <TouchableOpacity style={styles.cancelButton} onPress={onClose} disabled={loading}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -161,6 +168,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: '#6c757d',
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
 });
 
