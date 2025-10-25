@@ -17,7 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 // Corrected paths (3 levels up: features, auth, src):
 // @ts-ignore
-import collegeLogo from 'assets/images/collegeLogo.png';
+import collegeLogo from '../../assets/images/collegeLogo.png';
 // @ts-ignore
 import busIcon from '../../assets/images/busIcon.png';
 

@@ -1,9 +1,8 @@
-/**
- * @format
- */
+import { registerRootComponent } from 'expo';
 
-import {AppRegistry} from 'react-native';
+// Make sure this path is correct.
+// If your main app file is App.tsx, change this to './App.tsx'
 import App from './App';
-import {name as appName} from './app.json';
 
-AppRegistry.registerComponent(appName, () => App);
+// registerRootComponent handles registering the app as "main"
+registerRootComponent(App);
