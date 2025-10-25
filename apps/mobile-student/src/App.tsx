@@ -26,7 +26,7 @@ type AppState = 'SPLASH' | 'AUTH' | 'PROFILE_SETUP' | 'DASHBOARD' | 'PROFILE_SCR
 
 function App() {
   // This is the new code for debugging
-  const [appState, setAppState] = useState<AppState>('MY_TRIP'); // Starts the app on the trip screen
+  const [appState, setAppState] = useState<AppState>('SPLASH'); // Starts the app on the trip screen
 
   // Starts the app with a pre-booked trip for testing
   const [bookedTripDetails, setBookedTripDetails] = useState<TripDetails | null>({
